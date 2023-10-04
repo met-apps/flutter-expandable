@@ -102,6 +102,9 @@ class ExpandableThemeData {
   /// Expand icon padding.
   final EdgeInsets? iconPadding;
 
+  /// The number of clockwise quarter turns the icon should be rotated.
+  final int? iconInitialRotation;
+
   /// Icon rotation angle in clockwise radians. For example, specify `math.pi` to rotate the icon by 180 degrees
   /// clockwise when clicking on the expand button.
   final double? iconRotationAngle;
@@ -139,6 +142,7 @@ class ExpandableThemeData {
     this.collapseIcon,
     this.inkWellBorderRadius,
     this.bodyPosition,
+    this.iconInitialRotation,
   });
 
   static ExpandableThemeData combine(
@@ -174,6 +178,7 @@ class ExpandableThemeData {
         expandIcon: theme.expandIcon ?? defaults.expandIcon,
         collapseIcon: theme.collapseIcon ?? defaults.collapseIcon,
         bodyPosition: theme.bodyPosition ?? defaults.bodyPosition,
+        iconInitialRotation: theme.iconInitialRotation ?? defaults.iconInitialRotation,
       );
     }
   }
@@ -214,7 +219,8 @@ class ExpandableThemeData {
         this.iconRotationAngle != null &&
         this.expandIcon != null &&
         this.collapseIcon != null &&
-        this.bodyPosition != null;
+        this.bodyPosition != null &&
+        this.iconInitialRotation != null;
   }
 
   bool operator ==(dynamic o) {
@@ -240,7 +246,8 @@ class ExpandableThemeData {
           this.iconRotationAngle == o.iconRotationAngle &&
           this.expandIcon == o.expandIcon &&
           this.collapseIcon == o.collapseIcon &&
-          this.bodyPosition == o.bodyPosition;
+          this.bodyPosition == o.bodyPosition &&
+          this.iconInitialRotation == o.iconInitialRotation;
     } else {
       return false;
     }
@@ -732,10 +739,13 @@ class _ExpandableIconState extends State<ExpandableIcon>
                 (showSecondIcon
                     ? -(1.0 - animationController!.value)
                     : animationController!.value),
-            child: Icon(
-              showSecondIcon ? theme.collapseIcon! : theme.expandIcon!,
-              color: theme.iconColor!,
-              size: theme.iconSize!,
+            child: RotatedBox(
+              quarterTurns: theme.iconInitialRotation ?? 0,
+              child: Icon(
+                showSecondIcon ? theme.collapseIcon! : theme.expandIcon!,
+                color: theme.iconColor!,
+                size: theme.iconSize!,
+              ),
             ),
           );
         },
